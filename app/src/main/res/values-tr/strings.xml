@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Bu bölünmüş paketi kaldırmak istiyor musunuz?</string>
 
     <string name="uninstall_confirm_question">Bu uygulamayı kaldırmak istiyor musunuz?</string>
+    <string name="uninstalling">Kaldırılıyor…</string>
+    <string name="uninstall_done">Uygulama kaldırıldı.</string>
+    <string name="uninstall_failed">Bu uygulama kaldırılamadı.</string>
+    <string name="remove_split_confirm_question">Bu split paketi kaldırılsın mı?</string>
+    <string name="split_removed">Split paketi kaldırıldı.</string>
+    <string name="split_remove_failed">Split paketi kaldırılamadı.</string>
 
     <string name="install_done">Uygulama yüklendi.</string>
 

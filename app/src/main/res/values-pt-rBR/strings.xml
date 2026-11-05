@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Deseja remover este pacote dividido?</string>
 
     <string name="uninstall_confirm_question">Deseja desinstalar este app?</string>
+    <string name="uninstalling">Desinstalando…</string>
+    <string name="uninstall_done">Aplicativo desinstalado.</string>
+    <string name="uninstall_failed">Não foi possível desinstalar este aplicativo.</string>
+    <string name="remove_split_confirm_question">Remover este pacote split?</string>
+    <string name="split_removed">Pacote split removido.</string>
+    <string name="split_remove_failed">Não foi possível remover o pacote split.</string>
 
     <string name="install_done">App instalado.</string>
 

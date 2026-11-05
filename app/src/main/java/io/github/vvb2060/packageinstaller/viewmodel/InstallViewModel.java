@@ -23,6 +23,7 @@ import io.github.vvb2060.packageinstaller.core.PreferredActivity;
 import io.github.vvb2060.packageinstaller.installmodel.InstallAborted;
 import io.github.vvb2060.packageinstaller.installmodel.InstallParse;
 import io.github.vvb2060.packageinstaller.installmodel.InstallStage;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallUserAction;
 import io.github.vvb2060.packageinstaller.provider.ShizukuProvider;
 import rikka.shizuku.Shizuku;
 
@@ -86,6 +87,14 @@ public class InstallViewModel extends AndroidViewModel {
         executor.execute(() ->
             repository.install(setInstaller, commit, full, removeSplit)
         );
+    }
+
+    public void initiateUninstall(UninstallUserAction entry) {
+        if (cancelled) {
+            installResult.setValue(new InstallAborted(InstallAborted.ABORT_CLOSE));
+            return;
+        }
+        executor.execute(() -> repository.uninstall(entry));
     }
 
     private static boolean needSafeMode() {

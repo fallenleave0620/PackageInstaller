@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">क्या आप इस स्प्लिट पैकेज को हटाना चाहते हैं?</string>
 
     <string name="uninstall_confirm_question">क्या आप इस ऐप को अनइंस्टॉल करना चाहते हैं?</string>
+    <string name="uninstalling">अनइंस्टॉल हो रहा है…</string>
+    <string name="uninstall_done">ऐप अनइंस्टॉल हो गया।</string>
+    <string name="uninstall_failed">यह ऐप अनइंस्टॉल नहीं हो सका।</string>
+    <string name="remove_split_confirm_question">क्या इस स्प्लिट पैकेज को हटाना है?</string>
+    <string name="split_removed">स्प्लिट पैकेज हटा दिया गया।</string>
+    <string name="split_remove_failed">स्प्लिट पैकेज हटाया नहीं जा सका।</string>
 
     <string name="install_done">ऐप इंस्टॉल हो गया।</string>
 

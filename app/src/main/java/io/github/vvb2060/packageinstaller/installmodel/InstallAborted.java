@@ -13,6 +13,7 @@ public final class InstallAborted extends InstallStage {
     public static final int ABORT_NOTFOUND = 4;
     public static final int ABORT_CREATE = 5;
     public static final int ABORT_WRITE = 6;
+    public static final int ABORT_UNINSTALL = 7;
 
     public final int abortReason;
     @Nullable

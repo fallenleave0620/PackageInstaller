@@ -11,10 +11,12 @@ import android.content.pm.PackageManager_rename;
 import android.os.Bundle;
 import android.os.IBinder;
 
+import androidx.annotation.Nullable;
+
 public class LocalIntentReceiver {
     private final ResultObserver mResultObserver;
 
-    private final IIntentSender.Stub mLocalSender = new IIntentSender.Stub() {
+    private final IIntentSender mLocalSender = new IIntentSender.Stub() {
         @Override
         public void send(int code, Intent intent, String resolvedType, IBinder whitelistToken,
                          IIntentReceiver finishedReceiver, String requiredPermission, Bundle options) {
@@ -22,11 +24,13 @@ public class LocalIntentReceiver {
             String statusMessage = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
             int legacyStatus = intent.getIntExtra(PackageInstaller_rename.EXTRA_LEGACY_STATUS,
                 PackageManager_rename.INSTALL_FAILED_INTERNAL_ERROR);
-            mResultObserver.onResult(status, legacyStatus, statusMessage);
+            if (mResultObserver != null) {
+                mResultObserver.onResult(status, legacyStatus, statusMessage);
+            }
         }
     };
 
-    public LocalIntentReceiver(ResultObserver observer) {
+    public LocalIntentReceiver(@Nullable ResultObserver observer) {
         mResultObserver = observer;
     }
 

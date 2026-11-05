@@ -1,7 +1,8 @@
 package io.github.vvb2060.packageinstaller.installmodel;
 
 public abstract sealed class InstallStage permits InstallParse, InstallUserAction, InstallFailed,
-    PackageUserAction, SettingsUserAction, InstallInstalling, InstallSuccess, InstallAborted {
+    PackageUserAction, SettingsUserAction, InstallInstalling, InstallSuccess, InstallAborted,
+    UninstallUserAction, UninstallRunning, UninstallResult {
 
     public static final int STAGE_ABORTED = 0;
     public static final int STAGE_PARSE = 1;
@@ -11,6 +12,9 @@ public abstract sealed class InstallStage permits InstallParse, InstallUserActio
     public static final int STAGE_FAILED = 5;
     public static final int PACKAGE_USER_ACTION = 6;
     public static final int SETTINGS_USER_ACTION = 7;
+    public static final int UNINSTALL_USER_ACTION = 8;
+    public static final int STAGE_UNINSTALLING = 9;
+    public static final int STAGE_UNINSTALLED = 10;
 
     public final int stageCode;
 

@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Apakah Anda ingin menghapus paket terpisah ini?</string>
 
     <string name="uninstall_confirm_question">Apakah Anda ingin mencopot pemasangan aplikasi ini?</string>
+    <string name="uninstalling">Menghapus instalan…</string>
+    <string name="uninstall_done">Aplikasi telah dihapus.</string>
+    <string name="uninstall_failed">Gagal menghapus instalan aplikasi ini.</string>
+    <string name="remove_split_confirm_question">Hapus paket split ini?</string>
+    <string name="split_removed">Paket split dihapus.</string>
+    <string name="split_remove_failed">Gagal menghapus paket split.</string>
 
     <string name="install_done">Aplikasi terpasang.</string>
 

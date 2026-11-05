@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">이 분할 패키지를 제거하시겠습니까?</string>
 
     <string name="uninstall_confirm_question">이 앱을 제거하시겠습니까?</string>
+    <string name="uninstalling">설치 제거 중…</string>
+    <string name="uninstall_done">앱을 제거했습니다.</string>
+    <string name="uninstall_failed">이 앱을 제거하지 못했습니다.</string>
+    <string name="remove_split_confirm_question">이 split 패키지를 제거할까요?</string>
+    <string name="split_removed">split 패키지를 제거했습니다.</string>
+    <string name="split_remove_failed">split 패키지를 제거하지 못했습니다.</string>
 
     <string name="install_done">앱이 설치되었습니다.</string>
 

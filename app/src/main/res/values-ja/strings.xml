@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">この分割パッケージを削除しますか？</string>
 
     <string name="uninstall_confirm_question">このアプリをアンインストールしますか？</string>
+    <string name="uninstalling">アンインストール中…</string>
+    <string name="uninstall_done">アプリをアンインストールしました。</string>
+    <string name="uninstall_failed">このアプリをアンインストールできませんでした。</string>
+    <string name="remove_split_confirm_question">この split パッケージを削除しますか?</string>
+    <string name="split_removed">split パッケージを削除しました。</string>
+    <string name="split_remove_failed">split パッケージを削除できませんでした。</string>
 
     <string name="install_done">アプリをインストールしました。</string>
 

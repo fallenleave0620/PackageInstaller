@@ -253,6 +253,15 @@ public class PackageManager_rename {
 
     public static int DELETE_FAILED_ABORTED = -5;
 
+    public static int DELETE_FAILED_USED_SHARED_LIBRARY = -6;
+
+    public static int DELETE_FAILED_APP_PINNED = -7;
+
+    public static int DELETE_FAILED_FOR_CHILD_PROFILE = -8;
+
+    public static int VERSION_CODE_HIGHEST = -1;
+
+
     public native int installExistingPackage(String packageName, int installReason)
         throws PackageManager.NameNotFoundException;
 

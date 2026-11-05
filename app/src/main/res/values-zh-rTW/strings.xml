@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">要移除此分割套件嗎？</string>
 
     <string name="uninstall_confirm_question">要解除安裝此應用程式嗎？</string>
+    <string name="uninstalling">正在解除安裝…</string>
+    <string name="uninstall_done">已解除安裝應用程式。</string>
+    <string name="uninstall_failed">解除安裝失敗。</string>
+    <string name="remove_split_confirm_question">要移除此 split 套件嗎？</string>
+    <string name="split_removed">已移除 split 套件。</string>
+    <string name="split_remove_failed">移除 split 套件失敗。</string>
 
     <string name="install_done">已安裝應用程式。</string>
 

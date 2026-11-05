@@ -17,10 +17,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
+import android.os.RemoteException;
 import android.provider.OpenableColumns;
 import android.system.Os;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableKt;
 import androidx.lifecycle.MutableLiveData;
 
@@ -28,6 +30,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -47,6 +51,9 @@ import io.github.vvb2060.packageinstaller.installmodel.InstallSuccess;
 import io.github.vvb2060.packageinstaller.installmodel.InstallUserAction;
 import io.github.vvb2060.packageinstaller.installmodel.PackageUserAction;
 import io.github.vvb2060.packageinstaller.installmodel.SettingsUserAction;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallResult;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallRunning;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallUserAction;
 import rikka.shizuku.Shizuku;
 
 public class InstallRepository implements Closeable {
@@ -63,6 +70,13 @@ public class InstallRepository implements Closeable {
     private ApkLite apkLite;
     private ZipParser zipParser;
     private Closeable closeable;
+    private Intent intent;
+    /**
+     * intent 是否是卸载请求（只有这种才需要把结果回写给发起方）。
+     */
+    private boolean uninstallIntent;
+    @Nullable
+    private String lastUninstallError;
 
     public InstallRepository(Context context, boolean safeMode,
                              MutableLiveData<InstallStage> installResult,
@@ -81,7 +95,16 @@ public class InstallRepository implements Closeable {
 
     public void parseUri(Intent intent) {
         Log.v(TAG, "Intent: " + intent);
+        this.intent = intent;
         callingUid = intent.getIntExtra(Intent_rename.EXTRA_ORIGINATING_UID, Process.INVALID_UID);
+
+        var action = intent.getAction();
+        if (Intent.ACTION_DELETE.equals(action)
+            || Intent.ACTION_UNINSTALL_PACKAGE.equals(action)) {
+            uninstallIntent = true;
+            handleUninstallIntent();
+            return;
+        }
 
         var uri = intent.getData();
         if (uri == null) {
@@ -317,6 +340,209 @@ public class InstallRepository implements Closeable {
             break;
         }
         return full;
+    }
+
+    // ------------------------------------------------------------------
+    // 卸载
+    // ------------------------------------------------------------------
+
+    /**
+     * 处理 {@code ACTION_DELETE} / {@code ACTION_UNINSTALL_PACKAGE}：
+     * 支持 {@code package:xxx} 形式的 data（可带 {@code ?split=xxx}），
+     * 也支持 {@link Intent#EXTRA_PACKAGE_NAME}。
+     * 带 {@link Intent#EXTRA_RETURN_RESULT} 时，卸载结束会把结果回写给发起方。
+     */
+    private void handleUninstallIntent() {
+        var uri = intent.getData();
+        var packageName = intent.getStringExtra(Intent.EXTRA_PACKAGE_NAME);
+        String splitName = null;
+        if (uri != null) {
+            if ("package".equals(uri.getScheme()) || packageName == null) {
+                packageName = uri.getSchemeSpecificPart();
+            }
+            // package:com.foo?split=config.arm64 是 opaque（非 hierarchical）URI，
+            // getQueryParameter 会直接抛 UnsupportedOperationException，
+            // 只能自己从 schemeSpecificPart 里切出 ? 后面的参数。
+            var ssp = uri.getSchemeSpecificPart();
+            var q = ssp == null ? -1 : ssp.indexOf('?');
+            if (q >= 0) {
+                packageName = ssp.substring(0, q);
+                splitName = null;
+                for (var param : ssp.substring(q + 1).split("&")) {
+                    var eq = param.indexOf('=');
+                    var key = eq < 0 ? param : param.substring(0, eq);
+                    if ("split".equals(key) && eq > 0) {
+                        splitName = Uri.decode(param.substring(eq + 1));
+                    }
+                }
+            }
+        }
+        if (packageName == null || packageName.isEmpty()) {
+            installResult.postValue(new InstallAborted(InstallAborted.ABORT_NOTFOUND,
+                "No package name in " + intent));
+            return;
+        }
+        installResult.postValue(processUninstallUri(packageName, splitName));
+    }
+
+    private InstallStage processUninstallUri(String packageName, @Nullable String splitName) {
+        PackageInfo info;
+        try {
+            info = BinderWrapper.getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            return new InstallAborted(InstallAborted.ABORT_NOTFOUND, e.toString());
+        }
+
+        var app = info.applicationInfo;
+        var apk = ApkLite.fromPackageInfo(packageManager, info);
+        apkLite = apk;
+
+        // 只移除某个 split：先确认它确实属于这个应用
+        if (splitName != null && !splitName.isEmpty()) {
+            var found = false;
+            if (info.splitNames != null) {
+                for (var name : info.splitNames) {
+                    if (splitName.equals(name)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                return new InstallAborted(InstallAborted.ABORT_NOTFOUND,
+                    "Split " + splitName + " is not installed in " + packageName);
+            }
+            return new UninstallUserAction(apk, info.getLongVersionCode(), splitName,
+                app.sourceDir);
+        }
+
+        if ((app.flags & ApplicationInfo.FLAG_INSTALLED) == 0) {
+            return new InstallAborted(InstallAborted.ABORT_NOTFOUND,
+                packageName + " is not installed");
+        }
+        return new UninstallUserAction(apk, info.getLongVersionCode(), null, app.sourceDir);
+    }
+
+    /**
+     * 真正执行卸载。{@code entry} 来自确认对话框已经展示过的那份信息。
+     */
+    public void uninstall(UninstallUserAction entry) {
+        var apk = entry.apkLite;
+        installResult.postValue(new UninstallRunning());
+
+        if (entry.isSplit()) {
+            removeSplit(entry);
+            return;
+        }
+        if (apk.packageName.equals(BuildConfig.APPLICATION_ID)) {
+            deliverUninstallResult(UninstallResult.failed(apk, null,
+                "Refusing to uninstall the installer itself"));
+            return;
+        }
+
+        // 卸载之后应用就没了，先把标签/图标固化下来供结果对话框使用
+        if (apk.label == null || apk.icon == null) {
+            BinderWrapper.loadLabelAndIconFromSource(apk, entry.sourceDir);
+        }
+
+        var ok = uninstallViaPackageInstaller(entry);
+        if (!ok) {
+            lastUninstallError = uninstallViaPackageManager(apk.packageName);
+            ok = lastUninstallError == null;
+        }
+        if (ok) {
+            deliverUninstallResult(UninstallResult.uninstalled(apk, null));
+        } else {
+            deliverUninstallResult(UninstallResult.failed(apk, null, lastUninstallError));
+        }
+    }
+
+    /**
+     * 首选路径：PackageInstaller#uninstall（带 DELETE_SYSTEM_APP，
+     * Shizuku 的 shell uid 不是 installer of record 也能过）。
+     *
+     * @return true 表示成功（或已提交但暂未回调）
+     */
+    private boolean uninstallViaPackageInstaller(UninstallUserAction entry) {
+        var latch = new CountDownLatch(1);
+        var status = new int[]{Integer.MIN_VALUE};
+        var message = new String[1];
+
+        // onResult 可能在 Binder 线程里回调，直接在那里 post 会和工作线程抢结果，
+        // 这里只用 latch 把状态传回来，统一在调用线程里决定下一步。
+        var submitted = BinderWrapper.uninstallPackage(entry.apkLite.packageName,
+            entry.versionCode, PackageManager_rename.DELETE_SYSTEM_APP,
+            (statusCode, legacyStatus, msg) -> {
+                synchronized (status) {
+                    status[0] = statusCode;
+                    message[0] = msg;
+                }
+                latch.countDown();
+            });
+        if (!submitted) return false;
+
+        try {
+            // 卸载一般在几百毫秒内回调；等不到就当已提交
+            latch.await(15, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        synchronized (status) {
+            if (status[0] == Integer.MIN_VALUE) return true;
+            if (status[0] == PackageInstaller.STATUS_SUCCESS) return true;
+        }
+        lastUninstallError = message[0] != null && !message[0].isEmpty()
+            ? message[0] : "PackageInstaller returned status " + status[0];
+        return false;
+    }
+
+    /**
+     * 兜底路径：IPackageManager#uninstallPackageWithActiveAdmins，
+     * 没有权限和 installer of record 检查。
+     *
+     * @return null 表示成功，否则是错误说明
+     */
+    @Nullable
+    private String uninstallViaPackageManager(String packageName) {
+        try {
+            var code = BinderWrapper.uninstallPackageWithActiveAdmins(packageName);
+            if (code == PackageManager_rename.DELETE_SUCCEEDED) return null;
+            return "uninstallPackageWithActiveAdmins returned " + code;
+        } catch (RemoteException | RuntimeException e) {
+            Log.w(TAG, "uninstallPackageWithActiveAdmins", e);
+            return e.toString();
+        }
+    }
+
+    /**
+     * 移除单个 split：开一个 inherit 会话，removeSplit 后提交。
+     */
+    private void removeSplit(UninstallUserAction entry) {
+        var apk = entry.apkLite;
+        try {
+            var id = packageInstaller.createSession(createSessionParams(false, false));
+            try (var session = packageInstaller.openSession(id)) {
+                if (!safeMode) BinderWrapper.wrap(session);
+                session.removeSplit(entry.splitName);
+                commit(session);
+            }
+            deliverUninstallResult(UninstallResult.uninstalled(apk, entry.splitName));
+        } catch (IOException | RuntimeException e) {
+            Log.e(TAG, "Failed to remove split", e);
+            deliverUninstallResult(UninstallResult.failed(apk, entry.splitName, e.toString()));
+        }
+    }
+
+    private void deliverUninstallResult(UninstallResult result) {
+        installResult.postValue(result);
+        // 只有卸载 intent 才需要回写结果
+        if (!uninstallIntent || intent == null) return;
+        if (!intent.getBooleanExtra(Intent.EXTRA_RETURN_RESULT, false)) return;
+        // 移除 split 之后应用还在，对发起方来说算不上"卸载成功"，
+        // 所以只在整包真的卸载掉时回 true。
+        BinderWrapper.deliverUninstallResult(intent,
+            result.success && result.uninstalled && !result.isSplit(),
+            result.success ? null : result.message);
     }
 
     private InstallStage processPackageUri(String packageName) {

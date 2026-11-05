@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Bạn có muốn xóa gói phân tách này không?</string>
 
     <string name="uninstall_confirm_question">Bạn có muốn gỡ cài đặt ứng dụng này không?</string>
+    <string name="uninstalling">Đang gỡ cài đặt…</string>
+    <string name="uninstall_done">Đã gỡ cài đặt ứng dụng.</string>
+    <string name="uninstall_failed">Không thể gỡ cài đặt ứng dụng này.</string>
+    <string name="remove_split_confirm_question">Xoá gói split này?</string>
+    <string name="split_removed">Đã xoá gói split.</string>
+    <string name="split_remove_failed">Không thể xoá gói split.</string>
 
     <string name="install_done">Đã cài đặt ứng dụng.</string>
 

@@ -19,7 +19,8 @@ import io.github.vvb2060.packageinstaller.viewmodel.InstallViewModel;
 public abstract sealed class BaseDialogFragment extends DialogFragment permits
     InstallConfirmationFragment, InstallErrorFragment, InstallFailedFragment,
     InstallInstallingFragment, InstallParseFragment, InstallSuccessFragment,
-    UninstallConfirmationFragment, SettingsFragment {
+    UninstallConfirmationFragment, UninstallRunningFragment, UninstallResultFragment,
+    SettingsFragment {
 
     public final int stageCode;
     InstallViewModel mViewModel;

@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Θέλετε να καταργήσετε αυτό το διαχωρισμένο πακέτο;</string>
 
     <string name="uninstall_confirm_question">Θέλετε να απεγκαταστήσετε αυτήν την εφαρμογή;</string>
+    <string name="uninstalling">Κατάργηση εγκατάστασης…</string>
+    <string name="uninstall_done">Η εφαρμογή καταργήθηκε.</string>
+    <string name="uninstall_failed">Αποτυχία κατάργησης εγκατάστασης.</string>
+    <string name="remove_split_confirm_question">Να αφαιρεθεί αυτό το split package;</string>
+    <string name="split_removed">Το split package αφαιρέθηκε.</string>
+    <string name="split_remove_failed">Αποτυχία αφαίρεσης του split package.</string>
 
     <string name="install_done">Η εφαρμογή εγκαταστάθηκε.</string>
 

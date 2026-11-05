@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Удалить этот сплит-пакет?</string>
 
     <string name="uninstall_confirm_question">Удалить это приложение?</string>
+    <string name="uninstalling">Удаление…</string>
+    <string name="uninstall_done">Приложение удалено.</string>
+    <string name="uninstall_failed">Не удалось удалить приложение.</string>
+    <string name="remove_split_confirm_question">Удалить этот split-пакет?</string>
+    <string name="split_removed">Split-пакет удалён.</string>
+    <string name="split_remove_failed">Не удалось удалить split-пакет.</string>
 
     <string name="install_done">Приложение установлено.</string>
 

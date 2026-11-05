@@ -24,6 +24,9 @@ import io.github.vvb2060.packageinstaller.installmodel.InstallSuccess;
 import io.github.vvb2060.packageinstaller.installmodel.InstallUserAction;
 import io.github.vvb2060.packageinstaller.installmodel.PackageUserAction;
 import io.github.vvb2060.packageinstaller.installmodel.SettingsUserAction;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallResult;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallRunning;
+import io.github.vvb2060.packageinstaller.installmodel.UninstallUserAction;
 import io.github.vvb2060.packageinstaller.ui.fragments.BaseDialogFragment;
 import io.github.vvb2060.packageinstaller.ui.fragments.InstallConfirmationFragment;
 import io.github.vvb2060.packageinstaller.ui.fragments.InstallErrorFragment;
@@ -33,6 +36,8 @@ import io.github.vvb2060.packageinstaller.ui.fragments.InstallParseFragment;
 import io.github.vvb2060.packageinstaller.ui.fragments.InstallSuccessFragment;
 import io.github.vvb2060.packageinstaller.ui.fragments.SettingsFragment;
 import io.github.vvb2060.packageinstaller.ui.fragments.UninstallConfirmationFragment;
+import io.github.vvb2060.packageinstaller.ui.fragments.UninstallResultFragment;
+import io.github.vvb2060.packageinstaller.ui.fragments.UninstallRunningFragment;
 import io.github.vvb2060.packageinstaller.viewmodel.InstallViewModel;
 
 public class InstallLaunch extends FragmentActivity {
@@ -81,7 +86,13 @@ public class InstallLaunch extends FragmentActivity {
             case InstallAborted aborted -> new InstallErrorFragment(aborted);
             case InstallParse parse -> new InstallParseFragment(parse);
             case InstallUserAction action -> new InstallConfirmationFragment(action);
-            case PackageUserAction action -> new UninstallConfirmationFragment(action);
+            case PackageUserAction action -> new UninstallConfirmationFragment(
+                new UninstallUserAction(action.apkLite, action.info.getLongVersionCode(), null,
+                    action.info.applicationInfo == null ? null
+                        : action.info.applicationInfo.sourceDir));
+            case UninstallUserAction action -> new UninstallConfirmationFragment(action);
+            case UninstallRunning running -> new UninstallRunningFragment(running);
+            case UninstallResult result -> new UninstallResultFragment(result);
             case SettingsUserAction action -> new SettingsFragment(action);
             case InstallInstalling installing -> new InstallInstallingFragment(installing);
             case InstallSuccess success -> new InstallSuccessFragment(success);

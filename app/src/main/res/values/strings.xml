@@ -43,6 +43,12 @@
     <string name="install_confirm_question_split_remove">Do you want to remove this split package?</string>
 
     <string name="uninstall_confirm_question">Do you want to uninstall this app?</string>
+    <string name="uninstalling">Uninstalling…</string>
+    <string name="uninstall_done">App uninstalled.</string>
+    <string name="uninstall_failed">Failed to uninstall this app.</string>
+    <string name="remove_split_confirm_question">Do you want to remove this split package?</string>
+    <string name="split_removed">Split package removed.</string>
+    <string name="split_remove_failed">Failed to remove this split package.</string>
 
     <string name="install_done">App installed.</string>
 

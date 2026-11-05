@@ -43,9 +43,9 @@ public class ShizukuProvider extends ContentProvider {
                 PreferredActivity.set(context.getPackageManager());
             }
         });
-        if (!Sui.isSui()) {
-            Sui.init(BuildConfig.APPLICATION_ID);
-        }
+        // Sui 要无条件 init：它负责把 Sui 的 binder 塞进 Shizuku 的库并做自授权，
+        // 只在非 Sui 环境调用会在 Sui 永久授权后依然拿不到 binder。
+        Sui.init(BuildConfig.APPLICATION_ID);
         return true;
     }
 
@@ -74,7 +74,7 @@ public class ShizukuProvider extends ContentProvider {
 
     @SuppressLint("RestrictedApi")
     public static void waitForBinder(Context context) {
-        if (Shizuku.pingBinder()) return;
+        if (Shizuku.pingBinder() && Shizuku.getBinder() != null) return;
 
         var latch = new CountDownLatch(1);
         var receiver = new Binder() {
@@ -102,6 +102,14 @@ public class ShizukuProvider extends ContentProvider {
             .setPackage(rikka.shizuku.ShizukuProvider.MANAGER_APPLICATION_ID)
             .addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
             .putExtra("data", data);
+
+        // Sui 里没有 moe.shizuku.manager 这个"授权管理器"应用去接 REQUEST_BINDER 广播：
+        // 带上 PERMISSION_MANAGER 这个 receiverPermission，系统广播在"没有任何接收者持有该权限"
+        // 时会直接失败、根本投不出去（等于白等 5 秒）。Sui 自己 init 过就别再走广播。
+        if (Sui.isSui()) {
+            Log.d(TAG, "Using Sui, skip REQUEST_BINDER broadcast");
+            return;
+        }
 
         context.sendOrderedBroadcast(intent, PERMISSION_MANAGER, new BroadcastReceiver() {
             @Override
