@@ -1,0 +1,137 @@
+name: Release APK
+
+on:
+  push:
+    branches: [ feature/uninstall-intent ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '发布用的 tag（留空 = latest 滚动发布）'
+        required: false
+        default: latest
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # 本仓库 release 签名证书的 SHA-256（见 signing/keystore.properties 对应的 keystore）
+  EXPECTED_CERT_SHA256: c3611c0c7e9e04803f04705c2ad2f984d797d9602e5f5cab4ae21ee466ed4c18
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: |
+          sdkmanager --install "platform-tools" "platforms;android-37.2" "build-tools;37.0.0" > /dev/null
+          sdkmanager --list_installed
+
+      - name: Restore signing key
+        id: signing
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "${KEYSTORE_B64}" ]; then
+            echo "::warning::未配置 ANDROID_KEYSTORE_BASE64，本次产物将使用 debug 签名"
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          mkdir -p signing
+          printf '%s' "$KEYSTORE_B64" | base64 -d > signing/packageinstaller-release.jks
+          {
+            echo "storeFile=signing/packageinstaller-release.jks"
+            echo "storePassword=${STORE_PASSWORD}"
+            echo "keyAlias=${KEY_ALIAS:-packageinstaller}"
+            echo "keyPassword=${KEY_PASSWORD:-$STORE_PASSWORD}"
+          } > signing/keystore.properties
+          chmod 600 signing/packageinstaller-release.jks signing/keystore.properties
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build release APK
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Verify APK signature
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          APKSIGNER="$ANDROID_HOME/build-tools/37.0.0/apksigner"
+          "$APKSIGNER" verify --verbose --print-certs "$APK" | tee /tmp/verify.txt
+          if [ "${{ steps.signing.outputs.signed }}" = "true" ]; then
+            grep -q "Verified using v3 scheme (APK Signature Scheme v3): true" /tmp/verify.txt \
+              || { echo "::error::APK 缺少 v3 签名"; exit 1; }
+            CERT=$("$APKSIGNER" verify --print-certs "$APK" | awk -F': ' '/certificate SHA-256 digest/{print $2}' | tr -d ':' | tr 'A-F' 'a-f')
+            [ "$CERT" = "${EXPECTED_CERT_SHA256}" ] \
+              || { echo "::error::签名证书与预期不符：$CERT"; exit 1; }
+            echo "签名校验通过：v3 + $CERT"
+          fi
+
+      - name: Collect artifacts
+        id: collect
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          VERSION=$(grep -m1 'versionName' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          SUFFIX=""
+          if [ "${{ steps.signing.outputs.signed }}" != "true" ]; then SUFFIX="-debug-signed"; fi
+          NAME="packageinstaller-${VERSION}-${GITHUB_SHA::8}${SUFFIX}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "out/$NAME"
+          ( cd out && sha256sum "$NAME" > "$NAME.sha256" )
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          ls -l out
+
+      - name: Resolve release tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: packageinstaller-${{ steps.collect.outputs.name }}
+          path: out/*
+          if-no-files-found: error
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: PackageInstaller ${{ steps.tag.outputs.tag }}
+          prerelease: ${{ steps.tag.outputs.tag == 'latest' }}
+          make_latest: false
+          fail_on_unmatched_files: true
+          files: out/*
+          body: |
+            `feature/uninstall-intent` 自动构建 · commit ${{ github.sha }}
+
+            - 产物：${{ steps.collect.outputs.name }}
+            - 签名：${{ steps.signing.outputs.signed == 'true' && '自建 release 证书（v3 / RSA-4096）' || 'debug 签名（仓库未配置 ANDROID_KEYSTORE_BASE64）' }}
+            - 安装来源默认按商店记录（自动 → Google Play），可在设置里改成其它商店或自定义包名
