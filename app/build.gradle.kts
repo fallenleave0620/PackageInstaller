@@ -7,10 +7,20 @@ import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.commons.ClassRemapper
 import org.objectweb.asm.commons.Remapper
+import java.io.File
+import java.util.Properties
 
 plugins {
     id("com.android.application")
 }
+
+// 统一签名：signing/keystore.properties 里的密钥；没有该文件时退回 debug 签名
+val repositoryRoot = layout.settingsDirectory.asFile
+val releaseKeystoreProperties = Properties().apply {
+    val file = File(repositoryRoot, "signing/keystore.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val hasReleaseKeystore = releaseKeystoreProperties.getProperty("storeFile") != null
 
 android {
     enableKotlin = false
@@ -18,6 +28,18 @@ android {
     defaultConfig {
         versionCode = 14
         versionName = "2.0"
+    }
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = File(repositoryRoot, releaseKeystoreProperties.getProperty("storeFile"))
+                storePassword = releaseKeystoreProperties.getProperty("storePassword")
+                keyAlias = releaseKeystoreProperties.getProperty("keyAlias")
+                keyPassword = releaseKeystoreProperties.getProperty("keyPassword")
+                // 让 AGP 按 minSdk 走默认（v2），再显式要求 v3
+                enableV3Signing = true
+            }
+        }
     }
     buildTypes {
         debug {
@@ -28,7 +50,7 @@ android {
         }
         release {
             vcsInfo.include = false
-            signingConfig = signingConfigs["debug"]
+            signingConfig = signingConfigs.getByName(if (hasReleaseKeystore) "release" else "debug")
             optimization {
                 enable = true
                 keepRules {

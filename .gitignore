@@ -10,3 +10,5 @@
 local.properties
 *.apk
 *.aab
+# 本地统一签名（私钥与口令，勿入库）
+/signing/
