@@ -25,6 +25,7 @@
     <string name="install_source_none">Ta aplikacja (bez podszywania)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, niezainstalowany)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, nie można potwierdzić instalacji, zostanie użyty mimo to)</string>
     <string name="install_source_missing">%1$s (%2$s, niezainstalowany, użyty zostanie domyślny sklep)</string>
     <string name="install_source_custom">Własna nazwa pakietu…</string>
     <string name="install_source_custom_title">Nazwa pakietu instalatora</string>

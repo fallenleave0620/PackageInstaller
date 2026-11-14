@@ -25,6 +25,7 @@
     <string name="install_source_none">Αυτή η εφαρμογή (χωρίς παραποίηση)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, δεν είναι εγκατεστημένο)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, δεν είναι δυνατός ο έλεγχος εγκατάστασης, θα χρησιμοποιηθεί παρ\' όλα αυτά)</string>
     <string name="install_source_missing">%1$s (%2$s, δεν είναι εγκατεστημένο, χρήση προεπιλεγμένου καταστήματος)</string>
     <string name="install_source_custom">Προσαρμοσμένο όνομα πακέτου…</string>
     <string name="install_source_custom_title">Όνομα πακέτου εγκαταστάτη</string>

@@ -25,6 +25,7 @@
     <string name="install_source_none">Aplikasi ini (tanpa penyamaran)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, tidak terpasang)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, tidak dapat dipastikan terpasang, tetap digunakan)</string>
     <string name="install_source_missing">%1$s (%2$s, tidak terpasang, memakai toko default)</string>
     <string name="install_source_custom">Nama paket khusus…</string>
     <string name="install_source_custom_title">Nama paket pemasang</string>

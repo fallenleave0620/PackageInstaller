@@ -25,6 +25,7 @@
     <string name="install_source_none">Este app (sem falsificação)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, não instalado)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, não é possível verificar se está instalado, será usado mesmo assim)</string>
     <string name="install_source_missing">%1$s (%2$s, não instalado, usa a loja padrão)</string>
     <string name="install_source_custom">Nome de pacote personalizado…</string>
     <string name="install_source_custom_title">Nome do pacote instalador</string>

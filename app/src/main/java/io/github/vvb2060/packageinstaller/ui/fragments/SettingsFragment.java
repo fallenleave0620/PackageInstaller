@@ -115,7 +115,7 @@ public final class SettingsFragment extends BaseDialogFragment {
             var name = InstallSource.label(pm, configured);
             summary = InstallSource.isInstalled(pm, configured)
                 ? getString(R.string.install_source_configured, name, configured)
-                : getString(R.string.install_source_missing, name, configured);
+                : getString(R.string.install_source_unresolved, name, configured);
         }
         mInstallSourceRow.setText(getString(R.string.install_source_summary, summary));
     }

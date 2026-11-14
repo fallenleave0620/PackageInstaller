@@ -25,6 +25,7 @@
     <string name="install_source_none">Ứng dụng này (không giả mạo)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, chưa cài đặt)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, không thể xác minh đã cài đặt, vẫn sẽ dùng)</string>
     <string name="install_source_missing">%1$s (%2$s, chưa cài đặt, dùng cửa hàng mặc định)</string>
     <string name="install_source_custom">Tên gói tùy chỉnh…</string>
     <string name="install_source_custom_title">Tên gói trình cài đặt</string>

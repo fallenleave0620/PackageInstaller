@@ -25,6 +25,7 @@
     <string name="install_source_none">Это приложение (без подмены)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, не установлено)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, нельзя проверить установку, всё равно будет использован)</string>
     <string name="install_source_missing">%1$s (%2$s, не установлено, будет использован магазин по умолчанию)</string>
     <string name="install_source_custom">Своё имя пакета…</string>
     <string name="install_source_custom_title">Имя пакета установщика</string>

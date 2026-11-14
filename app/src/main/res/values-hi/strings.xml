@@ -25,6 +25,7 @@
     <string name="install_source_none">यह ऐप (कोई नकल नहीं)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, इंस्टॉल नहीं है)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, इंस्टॉल है या नहीं इसकी पुष्टि नहीं हो सकती, फिर भी उपयोग किया जाएगा)</string>
     <string name="install_source_missing">%1$s (%2$s, इंस्टॉल नहीं है, डिफ़ॉल्ट स्टोर पर लौटें)</string>
     <string name="install_source_custom">कस्टम पैकेज नाम…</string>
     <string name="install_source_custom_title">इंस्टॉलर पैकेज नाम</string>

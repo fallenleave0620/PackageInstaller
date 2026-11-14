@@ -25,6 +25,7 @@
     <string name="install_source_none">Bu uygulama (taklit yok)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, yüklü değil)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, yüklü olup olmadığı doğrulanamıyor, yine de kullanılacak)</string>
     <string name="install_source_missing">%1$s (%2$s, yüklü değil, varsayılan mağaza kullanılır)</string>
     <string name="install_source_custom">Özel paket adı…</string>
     <string name="install_source_custom_title">Yükleyici paket adı</string>

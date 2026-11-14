@@ -27,6 +27,7 @@
     <string name="install_source_none">This app (no spoofing)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, not installed)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, can\'t verify whether it\'s installed, will be used anyway)</string>
     <string name="install_source_missing">%1$s (%2$s, not installed, falls back to the default store)</string>
     <string name="install_source_custom">Custom package name…</string>
     <string name="install_source_custom_title">Installer package name</string>

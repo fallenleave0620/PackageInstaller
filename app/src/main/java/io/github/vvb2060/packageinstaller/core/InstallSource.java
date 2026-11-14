@@ -102,20 +102,27 @@ public final class InstallSource {
         return "com.android.shell";
     }
 
+    /** 配置来源的展示文本：能看到就显示应用名，看不到就显示包名。 */
+    public static CharSequence describe(PackageManager pm, String packageName) {
+        var name = label(pm, packageName);
+        return name.equals(packageName) ? name : name + "（" + packageName + "）";
+    }
+
     /**
-     * 把用户配置解析成实际可用的 installer 包名。
+     * 把用户配置解析成实际要写入的 installer 包名。
      *
-     * <p>配置的包名没装时退回默认商店——伪造一个不存在的 installer 大概率被系统
-     * 记成 {@code INSTALL_FAILED_INVALID_INSTALLER}，不如退到一个真实存在的商店。
+     * <p>显式配置的包名**原样使用**：Android 的包可见性会让本应用看不到某些已安装的应用
+     * （本机 ColorOS 上 com.heytap.market 就属于这种），按「是否可见」退回会把用户明确
+     * 选择的来源悄悄换掉。只有在没配置（自动）时才去挑默认商店。
      */
     public static String resolve(PackageManager pm, @Nullable String requested) {
         if (requested == null || requested.isEmpty()) {
             return defaultSource(pm);
         }
-        if (isInstalled(pm, requested)) return requested;
-        var fallback = defaultSource(pm);
-        android.util.Log.w(TAG, "installer " + requested + " 未安装，退回 " + fallback);
-        return fallback;
+        if (!isInstalled(pm, requested)) {
+            android.util.Log.w(TAG, "installer " + requested + " 不可见，仍按配置写入");
+        }
+        return requested;
     }
 
     /** 显示名：优先应用名，查不到时用包名。 */

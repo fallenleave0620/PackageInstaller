@@ -19,6 +19,15 @@
 
     <queries>
         <package android:name="moe.shizuku.privileged.api" />
+        <!-- 安装来源需要在设置页里列出并解析这些商店的名称/是否存在 -->
+        <package android:name="com.android.vending" />
+        <package android:name="com.heytap.market" />
+        <package android:name="com.oppo.market" />
+        <package android:name="com.xiaomi.market" />
+        <package android:name="com.huawei.appmarket" />
+        <package android:name="com.hihonor.appmarket" />
+        <package android:name="com.bbk.appstore" />
+        <package android:name="com.sec.android.app.samsungapps" />
     </queries>
 
     <application

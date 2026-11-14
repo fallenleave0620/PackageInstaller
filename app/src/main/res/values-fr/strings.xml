@@ -25,6 +25,7 @@
     <string name="install_source_none">Cette appli (sans usurpation)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, non installé)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, impossible de vérifier l\'installation, sera utilisé quand même)</string>
     <string name="install_source_missing">%1$s (%2$s, non installé, retour au magasin par défaut)</string>
     <string name="install_source_custom">Nom de paquet personnalisé…</string>
     <string name="install_source_custom_title">Nom du paquet installateur</string>

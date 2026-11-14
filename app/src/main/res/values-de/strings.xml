@@ -25,6 +25,7 @@
     <string name="install_source_none">Diese App (keine Vortäuschung)</string>
     <string name="install_source_configured">%1$s (%2$s)</string>
     <string name="install_source_unavailable">%1$s (%2$s, nicht installiert)</string>
+    <string name="install_source_unresolved">%1$s (%2$s, Installation nicht überprüfbar, wird trotzdem verwendet)</string>
     <string name="install_source_missing">%1$s (%2$s, nicht installiert, verwendet den Standardspeicher)</string>
     <string name="install_source_custom">Benutzerdefinierter Paketname…</string>
     <string name="install_source_custom_title">Paketname des Installers</string>

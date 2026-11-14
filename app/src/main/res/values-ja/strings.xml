@@ -25,6 +25,7 @@
     <string name="install_source_none">このアプリ（偽装なし）</string>
     <string name="install_source_configured">%1$s（%2$s）</string>
     <string name="install_source_unavailable">%1$s（%2$s、未インストール）</string>
+    <string name="install_source_unresolved">%1$s（%2$s、インストール済みか確認できませんが、そのまま使用します）</string>
     <string name="install_source_missing">%1$s（%2$s、未インストール、既定のストアを使用）</string>
     <string name="install_source_custom">カスタムパッケージ名…</string>
     <string name="install_source_custom_title">インストーラのパッケージ名</string>
