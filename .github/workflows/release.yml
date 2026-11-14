@@ -35,13 +35,18 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
+      # 直接用 runner 预装的 Android SDK（不额外拉第三方 action，少一个失败点）
       - name: Install SDK packages
         run: |
-          sdkmanager --install "platform-tools" "platforms;android-37.2" "build-tools;37.0.0" > /dev/null
-          sdkmanager --list_installed
+          set -euo pipefail
+          if [ -z "${ANDROID_HOME:-}" ]; then echo "ANDROID_HOME=$HOME/android-sdk" >> "$GITHUB_ENV"; export ANDROID_HOME=$HOME/android-sdk; fi
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then SDKMANAGER="$(command -v sdkmanager)"; fi
+          echo "sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-37.2" "build-tools;37.0.0" > /dev/null
+          "$SDKMANAGER" --list_installed
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
 
       - name: Restore signing key
         id: signing
