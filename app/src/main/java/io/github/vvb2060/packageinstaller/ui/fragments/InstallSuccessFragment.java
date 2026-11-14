@@ -28,6 +28,9 @@ public final class InstallSuccessFragment extends BaseDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         var context = requireContext();
         var message = context.getString(R.string.install_done);
+        if (mDialogData.cleanupMessage != 0) {
+            message += "\n\n" + context.getString(mDialogData.cleanupMessage);
+        }
         mDialog = new AlertDialog.Builder(context)
             .setTitle(mDialogData.apkLite.getLabel())
             .setIcon(mDialogData.apkLite.getIcon())

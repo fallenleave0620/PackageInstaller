@@ -1,0 +1,4 @@
+<resources>
+    <string name="source_package_deleted">已自动删除本次安装的源安装包。</string>
+    <string name="source_package_retained">应用已安装成功。文件提供方未允许或未确认删除，源安装包已保留。</string>
+</resources>

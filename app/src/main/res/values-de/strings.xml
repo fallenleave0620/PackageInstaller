@@ -87,4 +87,6 @@
     <string name="error_cancelled">Installation abgebrochen.</string>
 
     <string name="settings_safe_mode">Im abgesicherten Modus werden einige riskante Funktionen deaktiviert. Nur bei Bedarf aktivieren</string>
+    <string name="delete_source_after_install">Quellpaket nach erfolgreicher Installation löschen</string>
+    <string name="delete_source_hint">Erfordert eine Löschberechtigung des Quelldatei-Anbieters. Bei Fehlschlag oder Abbruch bleibt das Quellpaket erhalten.</string>
 </resources>

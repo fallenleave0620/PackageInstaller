@@ -87,4 +87,6 @@
     <string name="error_cancelled">Установка отменена.</string>
 
     <string name="settings_safe_mode">Безопасный режим отключает некоторые опасные функции, включайте только при необходимости</string>
+    <string name="delete_source_after_install">Удалять исходный пакет после успешной установки</string>
+    <string name="delete_source_hint">Требуется разрешение на удаление от поставщика исходного файла. При ошибке или отмене пакет сохраняется.</string>
 </resources>

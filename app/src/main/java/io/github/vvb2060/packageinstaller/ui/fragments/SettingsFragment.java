@@ -26,6 +26,15 @@ public final class SettingsFragment extends BaseDialogFragment {
 
     private final SettingsUserAction mDialogData;
     private TextView mInstallSourceRow;
+    private CheckBox mDeleteSource;
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mDeleteSource != null) {
+            outState.putBoolean("delete_source_after_install", mDeleteSource.isChecked());
+        }
+    }
 
     public SettingsFragment(SettingsUserAction dialogData) {
         super(dialogData);
@@ -48,6 +57,18 @@ public final class SettingsFragment extends BaseDialogFragment {
 
         // 安装来源：点一下弹出预设商店列表（也可以手填包名）
         var container = (LinearLayout) ((ViewGroup) dialogView).getChildAt(0);
+        var deleteSource = new CheckBox(requireContext());
+        deleteSource.setText(R.string.delete_source_after_install);
+        deleteSource.setChecked(savedInstanceState != null
+            ? savedInstanceState.getBoolean("delete_source_after_install",
+                mViewModel.isDeleteSourceAfterInstall())
+            : mViewModel.isDeleteSourceAfterInstall());
+        mDeleteSource = deleteSource;
+        container.addView(deleteSource);
+        var deleteHint = new TextView(requireContext());
+        deleteHint.setText(R.string.delete_source_hint);
+        deleteHint.setTextAppearance(android.R.style.TextAppearance_Material_Caption);
+        container.addView(deleteHint);
         mInstallSourceRow = createInstallSourceRow(container);
         mInstallSourceRow.setOnClickListener(v -> showInstallSourcePicker());
         updateInstallSourceRow();
@@ -57,6 +78,7 @@ public final class SettingsFragment extends BaseDialogFragment {
             .setIcon(R.drawable.ic_app_icon)
             .setView(dialogView)
             .setPositiveButton(android.R.string.ok, (_, _) -> {
+                mViewModel.setDeleteSourceAfterInstall(deleteSource.isChecked());
                 var checked = checkBox.isChecked();
                 if (checked != mDialogData.safeMode) {
                     mViewModel.setSafeMode(checked);

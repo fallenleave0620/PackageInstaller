@@ -87,4 +87,6 @@
     <string name="error_cancelled">インストールがキャンセルされました。</string>
 
     <string name="settings_safe_mode">セーフモードでは一部の危険な機能が無効になります。必要な場合にのみ有効にしてください</string>
+    <string name="delete_source_after_install">インストール成功後に元のパッケージを削除</string>
+    <string name="delete_source_hint">提供元のファイルプロバイダーに削除権限が必要です。失敗またはキャンセル時は元のパッケージを保持します。</string>
 </resources>

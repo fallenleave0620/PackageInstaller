@@ -87,4 +87,6 @@
     <string name="error_cancelled">Instalación cancelada.</string>
 
     <string name="settings_safe_mode">El modo seguro inhabilita algunas funciones peligrosas; actívalo solo si es necesario</string>
+    <string name="delete_source_after_install">Eliminar el paquete de origen tras una instalación correcta</string>
+    <string name="delete_source_hint">Requiere permiso de borrado del proveedor del archivo de origen. Si falla o se cancela, se conserva el paquete.</string>
 </resources>

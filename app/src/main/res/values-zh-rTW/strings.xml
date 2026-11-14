@@ -89,4 +89,6 @@
     <string name="error_cancelled">已取消安裝。</string>
 
     <string name="settings_safe_mode">安全模式會停用部分危險功能，僅在必要時啟用</string>
+    <string name="delete_source_after_install">安裝成功後自動刪除來源安裝檔</string>
+    <string name="delete_source_hint">需要來源檔案提供者允許刪除；安裝失敗或取消時保留安裝檔。</string>
 </resources>

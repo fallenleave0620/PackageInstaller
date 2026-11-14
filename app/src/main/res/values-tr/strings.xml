@@ -87,4 +87,6 @@
     <string name="error_cancelled">Yükleme iptal edildi.</string>
 
     <string name="settings_safe_mode">Güvenli mod bazı tehlikeli özellikleri devre dışı bırakır, yalnızca gerektiğinde etkinleştirin</string>
+    <string name="delete_source_after_install">Başarılı kurulumdan sonra kaynak paketi sil</string>
+    <string name="delete_source_hint">Kaynak dosya sağlayıcısından silme izni gerekir. Kurulum başarısız olur veya iptal edilirse kaynak paket korunur.</string>
 </resources>

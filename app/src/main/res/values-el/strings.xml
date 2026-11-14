@@ -87,4 +87,6 @@
     <string name="error_cancelled">Η εγκατάσταση ακυρώθηκε.</string>
 
     <string name="settings_safe_mode">Η ασφαλής λειτουργία απενεργοποιεί ορισμένες επικίνδυνες λειτουργίες, ενεργοποιήστε μόνο όταν είναι απαραίτητο</string>
+    <string name="delete_source_after_install">Διαγραφή του πακέτου προέλευσης μετά την επιτυχή εγκατάσταση</string>
+    <string name="delete_source_hint">Απαιτείται άδεια διαγραφής από τον πάροχο του αρχείου προέλευσης. Σε αποτυχία ή ακύρωση το πακέτο διατηρείται.</string>
 </resources>

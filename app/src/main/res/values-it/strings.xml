@@ -87,4 +87,6 @@
     <string name="error_cancelled">Installazione annullata.</string>
 
     <string name="settings_safe_mode">La modalità provvisoria disattiva alcune funzionalità pericolose; attivala solo se necessario</string>
+    <string name="delete_source_after_install">Elimina il pacchetto di origine dopo un\'installazione riuscita</string>
+    <string name="delete_source_hint">Richiede l\'autorizzazione all\'eliminazione dal provider del file di origine. In caso di errore o annullamento il pacchetto viene conservato.</string>
 </resources>

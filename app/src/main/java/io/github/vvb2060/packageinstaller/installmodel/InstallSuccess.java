@@ -11,12 +11,14 @@ public final class InstallSuccess extends InstallStage {
     @Nullable
     public final Intent startIntent;
     public final boolean safeMode;
+    public final int cleanupMessage;
 
-    public InstallSuccess(ApkLite apkLite, Intent startIntent, boolean safeMode) {
+    public InstallSuccess(ApkLite apkLite, Intent startIntent, boolean safeMode, int cleanupMessage) {
         super(STAGE_SUCCESS);
         this.apkLite = apkLite;
         this.startIntent = startIntent;
         this.safeMode = safeMode;
+        this.cleanupMessage = cleanupMessage;
     }
 
 }

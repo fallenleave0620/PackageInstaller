@@ -87,4 +87,6 @@
     <string name="error_cancelled">Pemasangan dibatalkan.</string>
 
     <string name="settings_safe_mode">Mode aman menonaktifkan beberapa fitur berbahaya, aktifkan hanya jika diperlukan</string>
+    <string name="delete_source_after_install">Hapus paket sumber setelah instalasi berhasil</string>
+    <string name="delete_source_hint">Memerlukan izin hapus dari penyedia file sumber. Jika gagal atau dibatalkan, paket sumber dipertahankan.</string>
 </resources>

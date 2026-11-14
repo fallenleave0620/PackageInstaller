@@ -87,4 +87,6 @@
     <string name="error_cancelled">Installation annulée.</string>
 
     <string name="settings_safe_mode">Le mode sans échec désactive certaines fonctionnalités dangereuses, à n\'activer qu\'en cas de besoin</string>
+    <string name="delete_source_after_install">Supprimer le paquet source après une installation réussie</string>
+    <string name="delete_source_hint">Nécessite l\'autorisation de suppression du fournisseur du fichier source. En cas d\'échec ou d\'annulation, le paquet est conservé.</string>
 </resources>

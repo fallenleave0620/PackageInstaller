@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 
 import io.github.vvb2060.packageinstaller.BuildConfig;
+import io.github.vvb2060.packageinstaller.R;
 import io.github.vvb2060.packageinstaller.apk.ApkLite;
 import io.github.vvb2060.packageinstaller.apk.ZipParser;
 import io.github.vvb2060.packageinstaller.apksig.Block;
@@ -72,6 +73,9 @@ public class InstallRepository implements Closeable {
     private ZipParser zipParser;
     private Closeable closeable;
     private Intent intent;
+    private Uri sourcePackageUri;
+    private final java.util.concurrent.atomic.AtomicBoolean successDelivered =
+        new java.util.concurrent.atomic.AtomicBoolean();
     /**
      * intent 是否是卸载请求（只有这种才需要把结果回写给发起方）。
      */
@@ -98,6 +102,8 @@ public class InstallRepository implements Closeable {
     public void parseUri(Intent intent) {
         Log.v(TAG, "Intent: " + intent);
         this.intent = intent;
+        sourcePackageUri = null;
+        successDelivered.set(false);
         callingUid = intent.getIntExtra(Intent_rename.EXTRA_ORIGINATING_UID, Process.INVALID_UID);
 
         var action = intent.getAction();
@@ -149,6 +155,8 @@ public class InstallRepository implements Closeable {
     }
 
     public void install(boolean setInstaller, boolean commit, boolean full, boolean removeSplit) {
+        // Only a committed write of this source may delete it after success.
+        if (!commit || removeSplit) sourcePackageUri = null;
         installResult.postValue(new InstallInstalling(apkLite));
         if (zipParser == null) {
             installPackageUri();
@@ -243,6 +251,8 @@ public class InstallRepository implements Closeable {
             Log.e(TAG, "Failed to parse APK: " + uri, e);
             return new InstallAborted(InstallAborted.ABORT_PARSE, e.toString());
         }
+        // 解析成功后才登记为「可删除的源包」；是否真的删除还要看 install() 是否 commit。
+        sourcePackageUri = uri;
 
         if (callingUid == Process.INVALID_UID) {
             var provider = packageManager.resolveContentProvider(uri.getAuthority(), 0);
@@ -693,8 +703,29 @@ public class InstallRepository implements Closeable {
         return params;
     }
 
+    /**
+     * 删除本次安装的源安装包。只认 {@link #sourcePackageUri} 这一个 URI，
+     * 不猜路径、不递归、不用任何提权通道兜底：删除权限由来源 provider 决定。
+     * 已在 {@link #install} 里保证只有「真正写入并 commit 的单包安装」才会留下这个 URI。
+     */
+    private int deleteSourcePackage() {
+        var source = sourcePackageUri;
+        sourcePackageUri = null;
+        if (source == null || uninstallIntent) return 0;
+        if (!context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
+            .getBoolean("delete_source_after_install", true)) {
+            return 0;
+        }
+        return SourcePackageCleanup.delete(context, source)
+            ? R.string.source_package_deleted
+            : R.string.source_package_retained;
+    }
+
     private void setStageBasedOnResult(int statusCode, int legacyStatus, String message) {
         if (statusCode == PackageInstaller.STATUS_SUCCESS) {
+            // 成功回调可能重复到达（commit 与系统重投递），只消费一次源 URI。
+            if (!successDelivered.compareAndSet(false, true)) return;
+            var cleanupMessage = deleteSourcePackage();
             var startIntent = BinderWrapper.pm.getLaunchIntentForPackage(apkLite.packageName);
             try {
                 var info = BinderWrapper.getPackageInfo(apkLite.packageName, 0);
@@ -702,7 +733,7 @@ public class InstallRepository implements Closeable {
                 apkLite.label = info.applicationInfo.loadLabel(packageManager).toString();
             } catch (PackageManager.NameNotFoundException ignored) {
             }
-            installResult.postValue(new InstallSuccess(apkLite, startIntent, safeMode));
+            installResult.postValue(new InstallSuccess(apkLite, startIntent, safeMode, cleanupMessage));
         } else if (statusCode == PackageInstaller.STATUS_PENDING_USER_ACTION) {
             BinderWrapper.setPermissionsResult(sessionId);
         } else {

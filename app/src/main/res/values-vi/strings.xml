@@ -87,4 +87,6 @@
     <string name="error_cancelled">Đã hủy cài đặt.</string>
 
     <string name="settings_safe_mode">Chế độ an toàn vô hiệu hóa một số tính năng nguy hiểm, chỉ bật khi cần thiết</string>
+    <string name="delete_source_after_install">Xóa gói nguồn sau khi cài đặt thành công</string>
+    <string name="delete_source_hint">Cần quyền xóa từ nhà cung cấp tệp nguồn. Nếu cài đặt thất bại hoặc bị hủy, gói nguồn được giữ lại.</string>
 </resources>

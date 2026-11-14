@@ -96,6 +96,14 @@ public class InstallViewModel extends AndroidViewModel {
         executor.execute(() -> repository.uninstall(entry));
     }
 
+    public boolean isDeleteSourceAfterInstall() {
+        return sp.getBoolean("delete_source_after_install", true);
+    }
+
+    public void setDeleteSourceAfterInstall(boolean enabled) {
+        sp.edit().putBoolean("delete_source_after_install", enabled).apply();
+    }
+
     public void setSafeMode(boolean safeMode) {
         sp.edit().putBoolean("safe_mode", safeMode).apply();
     }

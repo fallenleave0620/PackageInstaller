@@ -87,4 +87,6 @@
     <string name="error_cancelled">Instalacja została anulowana.</string>
 
     <string name="settings_safe_mode">Tryb bezpieczny wyłącza niektóre niebezpieczne funkcje, włączaj tylko w razie potrzeby</string>
+    <string name="delete_source_after_install">Usuń pakiet źródłowy po udanej instalacji</string>
+    <string name="delete_source_hint">Wymaga uprawnienia do usuwania od dostawcy pliku źródłowego. W razie niepowodzenia lub anulowania pakiet zostaje zachowany.</string>
 </resources>

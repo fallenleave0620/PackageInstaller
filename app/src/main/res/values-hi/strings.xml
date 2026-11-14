@@ -87,4 +87,6 @@
     <string name="error_cancelled">इंस्टॉलेशन रद्द कर दिया गया।</string>
 
     <string name="settings_safe_mode">सुरक्षित मोड कुछ ख़तरनाक सुविधाओं को अक्षम करता है, केवल आवश्यक होने पर ही सक्षम करें</string>
+    <string name="delete_source_after_install">सफल इंस्टॉल के बाद स्रोत पैकेज हटाएँ</string>
+    <string name="delete_source_hint">स्रोत फ़ाइल प्रदाता से हटाने की अनुमति आवश्यक है। विफल या रद्द होने पर स्रोत पैकेज रखा जाता है।</string>
 </resources>

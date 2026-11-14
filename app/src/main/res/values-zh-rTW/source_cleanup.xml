@@ -1,0 +1,4 @@
+<resources>
+    <string name="source_package_deleted">已自動刪除本次安裝的來源安裝套件。</string>
+    <string name="source_package_retained">應用程式已安裝成功。檔案提供者未允許或未確認刪除，來源安裝套件已保留。</string>
+</resources>
