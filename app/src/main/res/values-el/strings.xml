@@ -19,6 +19,18 @@
     <string name="set_installer">Ορισμός προγράμματος εγκατάστασης</string>
     <string name="only_clear_data">Μόνο εκκαθάριση δεδομένων</string>
     <string name="safe_mode">Ασφαλής λειτουργία</string>
+    <string name="install_source">Πηγή εγκατάστασης</string>
+    <string name="install_source_summary">Πηγή εγκατάστασης: %1$s</string>
+    <string name="install_source_auto">Αυτόματα (προεπιλεγμένο κατάστημα: %1$s)</string>
+    <string name="install_source_none">Αυτή η εφαρμογή (χωρίς παραποίηση)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, δεν είναι εγκατεστημένο)</string>
+    <string name="install_source_missing">%1$s (%2$s, δεν είναι εγκατεστημένο, χρήση προεπιλεγμένου καταστήματος)</string>
+    <string name="install_source_custom">Προσαρμοσμένο όνομα πακέτου…</string>
+    <string name="install_source_custom_title">Όνομα πακέτου εγκαταστάτη</string>
+    <string name="install_source_custom_hint">π.χ. com.android.vending</string>
+    <string name="install_source_hint">Η καταχώριση καταστήματος ως εγκαταστάτη συνήθως αποφεύγει τους περιορισμούς OEM για εφαρμογές από άγνωστες πηγές.</string>
+    <string name="set_installer_named">Ορισμός εγκαταστάτη σε %1$s</string>
 
     <string name="package_name">"Πακέτο: "</string>
     <string name="size">"Μέγεθος: "</string>

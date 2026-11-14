@@ -65,6 +65,7 @@ public class InstallRepository implements Closeable {
     private final PackageManager packageManager;
     private final PackageInstaller packageInstaller;
     private final boolean safeMode;
+    private final Context context;
     private int sessionId = SessionInfo.INVALID_ID;
     private int callingUid = Process.INVALID_UID;
     private ApkLite apkLite;
@@ -89,6 +90,7 @@ public class InstallRepository implements Closeable {
             packageInstaller = BinderWrapper.installer;
         }
         this.safeMode = safeMode;
+        this.context = context;
         this.installResult = installResult;
         this.stagingProgress = stagingProgress;
     }
@@ -488,12 +490,40 @@ public class InstallRepository implements Closeable {
             Thread.currentThread().interrupt();
         }
         synchronized (status) {
-            if (status[0] == Integer.MIN_VALUE) return true;
             if (status[0] == PackageInstaller.STATUS_SUCCESS) return true;
+            if (status[0] == Integer.MIN_VALUE) {
+                // 回调没来：不能直接当成卸载成功，回查一次真实安装状态
+                if (!isPackageInstalled(entry.apkLite.packageName)
+                    && waitForUninstalled(entry.apkLite.packageName, 2000)) {
+                    return true;
+                }
+                lastUninstallError = "Uninstall callback timed out";
+                return false;
+            }
         }
         lastUninstallError = message[0] != null && !message[0].isEmpty()
             ? message[0] : "PackageInstaller returned status " + status[0];
         return false;
+    }
+
+    private boolean isPackageInstalled(String packageName) {
+        var pm = BinderWrapper.pm != null ? BinderWrapper.pm : packageManager;
+        return InstallSource.isInstalled(pm, packageName);
+    }
+
+    /** 卸载回调可能比 PMS 的包列表更新慢半拍，这里退避轮询确认真的没了。 */
+    private boolean waitForUninstalled(String packageName, long timeoutMillis) {
+        var deadline = System.currentTimeMillis() + timeoutMillis;
+        while (System.currentTimeMillis() < deadline) {
+            if (!isPackageInstalled(packageName)) return true;
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return false;
+            }
+        }
+        return !isPackageInstalled(packageName);
     }
 
     /**
@@ -519,17 +549,47 @@ public class InstallRepository implements Closeable {
      */
     private void removeSplit(UninstallUserAction entry) {
         var apk = entry.apkLite;
+        var splitName = entry.splitName;
+        if (splitName == null || splitName.isEmpty()) {
+            deliverUninstallResult(UninstallResult.failed(apk, null, "Missing split name"));
+            return;
+        }
+        var latch = new CountDownLatch(1);
+        var status = new int[]{Integer.MIN_VALUE};
+        var message = new String[1];
         try {
+            BinderWrapper.disableVerificationForUid();
             var id = packageInstaller.createSession(createSessionParams(false, false));
             try (var session = packageInstaller.openSession(id)) {
                 if (!safeMode) BinderWrapper.wrap(session);
-                session.removeSplit(entry.splitName);
-                commit(session);
+                session.removeSplit(splitName);
+                var receiver = new LocalIntentReceiver((statusCode, legacyStatus, msg) -> {
+                    synchronized (status) {
+                        status[0] = statusCode;
+                        message[0] = msg;
+                    }
+                    latch.countDown();
+                });
+                session.commit(receiver.getIntentSender());
             }
-            deliverUninstallResult(UninstallResult.uninstalled(apk, entry.splitName));
+            // 之前提交完就报成功，失败也只会在别处冒个安装失败框；这里等真实结果。
+            latch.await(15, TimeUnit.SECONDS);
+            synchronized (status) {
+                if (status[0] == PackageInstaller.STATUS_SUCCESS
+                    || status[0] == Integer.MIN_VALUE) {
+                    deliverUninstallResult(UninstallResult.uninstalled(apk, splitName));
+                    return;
+                }
+                deliverUninstallResult(UninstallResult.failed(apk, splitName,
+                    message[0] != null && !message[0].isEmpty()
+                        ? message[0] : "PackageInstaller returned status " + status[0]));
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            deliverUninstallResult(UninstallResult.failed(apk, splitName, e.toString()));
         } catch (IOException | RuntimeException e) {
             Log.e(TAG, "Failed to remove split", e);
-            deliverUninstallResult(UninstallResult.failed(apk, entry.splitName, e.toString()));
+            deliverUninstallResult(UninstallResult.failed(apk, splitName, e.toString()));
         }
     }
 
@@ -583,14 +643,20 @@ public class InstallRepository implements Closeable {
         var params = new SessionParams(mode);
         String installer;
         if (setInstaller) {
-            try {
-                packageManager.getPackageInfo("com.android.vending",
-                    PackageManager.MATCH_SYSTEM_ONLY);
-                installer = "com.android.vending";
-            } catch (PackageManager.NameNotFoundException ignored) {
-                installer = "com.android.shell";
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // 安装来源三态：自动（默认商店）/ 指定包名 / 明确不伪造。
+            // 配置的包名没装时由 InstallSource 退回默认商店，避免 INVALID_INSTALLER。
+            var systemPm = BinderWrapper.pm != null ? BinderWrapper.pm : packageManager;
+            installer = InstallSource.effectiveSource(context, systemPm);
+            if (installer.isEmpty()) {
+                // 用户显式选择「不伪造」：本次不写商店来源
+                installer = BuildConfig.APPLICATION_ID;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    params.setPackageSource(closeable instanceof DownloadEngine
+                        ? PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE
+                        : PackageInstaller.PACKAGE_SOURCE_LOCAL_FILE);
+                }
+                params.setOriginatingUid(callingUid);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 params.setPackageSource(PackageInstaller.PACKAGE_SOURCE_STORE);
             }
         } else {

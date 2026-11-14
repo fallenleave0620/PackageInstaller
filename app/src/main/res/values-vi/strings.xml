@@ -19,6 +19,18 @@
     <string name="set_installer">Đặt làm trình cài đặt</string>
     <string name="only_clear_data">Chỉ xóa dữ liệu</string>
     <string name="safe_mode">Chế độ an toàn</string>
+    <string name="install_source">Nguồn cài đặt</string>
+    <string name="install_source_summary">Nguồn cài đặt: %1$s</string>
+    <string name="install_source_auto">Tự động (cửa hàng mặc định: %1$s)</string>
+    <string name="install_source_none">Ứng dụng này (không giả mạo)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, chưa cài đặt)</string>
+    <string name="install_source_missing">%1$s (%2$s, chưa cài đặt, dùng cửa hàng mặc định)</string>
+    <string name="install_source_custom">Tên gói tùy chỉnh…</string>
+    <string name="install_source_custom_title">Tên gói trình cài đặt</string>
+    <string name="install_source_custom_hint">ví dụ: com.android.vending</string>
+    <string name="install_source_hint">Ghi nhận cửa hàng làm trình cài đặt thường tránh được hạn chế của OEM với ứng dụng từ nguồn không rõ.</string>
+    <string name="set_installer_named">Đặt trình cài đặt là %1$s</string>
 
     <string name="package_name">"Gói: "</string>
     <string name="size">"Kích thước: "</string>

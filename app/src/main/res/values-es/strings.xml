@@ -19,6 +19,18 @@
     <string name="set_installer">Establecer instalador</string>
     <string name="only_clear_data">Solo borrar datos</string>
     <string name="safe_mode">Modo seguro</string>
+    <string name="install_source">Origen de instalación</string>
+    <string name="install_source_summary">Origen de instalación: %1$s</string>
+    <string name="install_source_auto">Automático (tienda predeterminada: %1$s)</string>
+    <string name="install_source_none">Esta app (sin suplantación)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, no instalado)</string>
+    <string name="install_source_missing">%1$s (%2$s, no instalado, se usará la tienda predeterminada)</string>
+    <string name="install_source_custom">Nombre de paquete personalizado…</string>
+    <string name="install_source_custom_title">Nombre del paquete instalador</string>
+    <string name="install_source_custom_hint">p. ej. com.android.vending</string>
+    <string name="install_source_hint">Registrar una tienda como instalador suele evitar las restricciones del fabricante para apps de origen desconocido.</string>
+    <string name="set_installer_named">Establecer instalador en %1$s</string>
 
     <string name="package_name">"Paquete: "</string>
     <string name="size">"Tamaño: "</string>

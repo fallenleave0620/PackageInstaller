@@ -19,6 +19,18 @@
     <string name="set_installer">Назначить установщиком</string>
     <string name="only_clear_data">Только удалить данные</string>
     <string name="safe_mode">Безопасный режим</string>
+    <string name="install_source">Источник установки</string>
+    <string name="install_source_summary">Источник установки: %1$s</string>
+    <string name="install_source_auto">Автоматически (магазин по умолчанию: %1$s)</string>
+    <string name="install_source_none">Это приложение (без подмены)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, не установлено)</string>
+    <string name="install_source_missing">%1$s (%2$s, не установлено, будет использован магазин по умолчанию)</string>
+    <string name="install_source_custom">Своё имя пакета…</string>
+    <string name="install_source_custom_title">Имя пакета установщика</string>
+    <string name="install_source_custom_hint">напр. com.android.vending</string>
+    <string name="install_source_hint">Если указать магазин как установщик, обычно удаётся обойти ограничения производителя для приложений из неизвестных источников.</string>
+    <string name="set_installer_named">Установщик: %1$s</string>
 
     <string name="package_name">"Пакет: "</string>
     <string name="size">"Размер: "</string>

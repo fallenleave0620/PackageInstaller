@@ -19,6 +19,18 @@
     <string name="set_installer">Yükleyiciyi ayarla</string>
     <string name="only_clear_data">Yalnızca verileri temizle</string>
     <string name="safe_mode">Güvenli mod</string>
+    <string name="install_source">Yükleme kaynağı</string>
+    <string name="install_source_summary">Yükleme kaynağı: %1$s</string>
+    <string name="install_source_auto">Otomatik (varsayılan mağaza: %1$s)</string>
+    <string name="install_source_none">Bu uygulama (taklit yok)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, yüklü değil)</string>
+    <string name="install_source_missing">%1$s (%2$s, yüklü değil, varsayılan mağaza kullanılır)</string>
+    <string name="install_source_custom">Özel paket adı…</string>
+    <string name="install_source_custom_title">Yükleyici paket adı</string>
+    <string name="install_source_custom_hint">örn. com.android.vending</string>
+    <string name="install_source_hint">Yükleyici olarak bir mağaza kaydetmek, bilinmeyen kaynaklı uygulamalardaki OEM kısıtlamalarını genelde aşar.</string>
+    <string name="set_installer_named">Yükleyiciyi %1$s olarak ayarla</string>
 
     <string name="package_name">"Paket: "</string>
     <string name="size">"Boyut: "</string>

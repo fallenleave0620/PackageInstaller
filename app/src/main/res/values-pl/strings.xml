@@ -19,6 +19,18 @@
     <string name="set_installer">Ustaw instalator</string>
     <string name="only_clear_data">Wyczyść tylko dane</string>
     <string name="safe_mode">Tryb bezpieczny</string>
+    <string name="install_source">Źródło instalacji</string>
+    <string name="install_source_summary">Źródło instalacji: %1$s</string>
+    <string name="install_source_auto">Automatycznie (domyślny sklep: %1$s)</string>
+    <string name="install_source_none">Ta aplikacja (bez podszywania)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, niezainstalowany)</string>
+    <string name="install_source_missing">%1$s (%2$s, niezainstalowany, użyty zostanie domyślny sklep)</string>
+    <string name="install_source_custom">Własna nazwa pakietu…</string>
+    <string name="install_source_custom_title">Nazwa pakietu instalatora</string>
+    <string name="install_source_custom_hint">np. com.android.vending</string>
+    <string name="install_source_hint">Zapisanie sklepu jako instalatora zwykle omija ograniczenia producenta dla aplikacji z nieznanych źródeł.</string>
+    <string name="set_installer_named">Ustaw instalatora na %1$s</string>
 
     <string name="package_name">"Pakiet: "</string>
     <string name="size">"Rozmiar: "</string>

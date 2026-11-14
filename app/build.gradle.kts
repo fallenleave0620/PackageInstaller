@@ -20,6 +20,12 @@ android {
         versionName = "2.0"
     }
     buildTypes {
+        debug {
+            // 可选：-PdevTest 时给 debug 包名加 .devtest，避免和已装的正式版签名冲突
+            if (providers.gradleProperty("devTest").isPresent) {
+                applicationIdSuffix = ".devtest"
+            }
+        }
         release {
             vcsInfo.include = false
             signingConfig = signingConfigs["debug"]

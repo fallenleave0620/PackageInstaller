@@ -20,6 +20,20 @@
     <string name="only_clear_data">仅清除数据</string>
     <string name="safe_mode">安全模式</string>
 
+    <!-- 安装来源（installer 包名） -->
+    <string name="install_source">安装来源</string>
+    <string name="install_source_summary">安装来源：%1$s</string>
+    <string name="install_source_auto">自动（默认商店：%1$s）</string>
+    <string name="install_source_none">本应用（不伪造来源）</string>
+    <string name="install_source_configured">%1$s（%2$s）</string>
+    <string name="install_source_unavailable">%1$s（%2$s，未安装）</string>
+    <string name="install_source_missing">%1$s（%2$s，未安装，将退回默认商店）</string>
+    <string name="install_source_custom">自定义包名…</string>
+    <string name="install_source_custom_title">installer 包名</string>
+    <string name="install_source_custom_hint">例如 com.android.vending</string>
+    <string name="install_source_hint">以商店名义安装，可绕开部分国内 OEM 对未知来源应用的权限限制。</string>
+    <string name="set_installer_named">将 installer 记为 %1$s</string>
+
     <string name="package_name">包名：</string>
     <string name="size">大小：</string>
     <string name="split_name">拆分：</string>

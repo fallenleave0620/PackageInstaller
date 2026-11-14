@@ -38,8 +38,10 @@ public final class UninstallResultFragment extends BaseDialogFragment {
             text = text + "\n\n" + mDialogData.message;
         }
         var apk = mDialogData.apkLite;
+        var title = apk.getLabel();
+        if (title == null || title.isEmpty()) title = apk.packageName;
         return new AlertDialog.Builder(context)
-            .setTitle(apk.getLabel())
+            .setTitle(title)
             .setIcon(apk.getIcon())
             .setMessage(text)
             .setPositiveButton(android.R.string.ok, (_, _) -> finish())

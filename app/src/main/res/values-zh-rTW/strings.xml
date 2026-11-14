@@ -20,6 +20,20 @@
     <string name="only_clear_data">僅清除資料</string>
     <string name="safe_mode">安全模式</string>
 
+    <!-- 安裝來源（installer 套件名） -->
+    <string name="install_source">安裝來源</string>
+    <string name="install_source_summary">安裝來源：%1$s</string>
+    <string name="install_source_auto">自動（預設商店：%1$s）</string>
+    <string name="install_source_none">本應用程式（不偽造來源）</string>
+    <string name="install_source_configured">%1$s（%2$s）</string>
+    <string name="install_source_unavailable">%1$s（%2$s，未安裝）</string>
+    <string name="install_source_missing">%1$s（%2$s，未安裝，將退回預設商店）</string>
+    <string name="install_source_custom">自訂套件名…</string>
+    <string name="install_source_custom_title">installer 套件名</string>
+    <string name="install_source_custom_hint">例如 com.android.vending</string>
+    <string name="install_source_hint">以商店名義安裝，可繞開部分 OEM 對未知來源應用程式的權限限制。</string>
+    <string name="set_installer_named">將 installer 記為 %1$s</string>
+
     <string name="package_name">"套件名稱："</string>
     <string name="size">"大小："</string>
     <string name="split_name">"分割："</string>

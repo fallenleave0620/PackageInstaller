@@ -20,6 +20,20 @@
     <string name="only_clear_data">Only clear data</string>
     <string name="safe_mode">Safe mode</string>
 
+    <!-- 安装来源（installer 包名） -->
+    <string name="install_source">Install source</string>
+    <string name="install_source_summary">Install source: %1$s</string>
+    <string name="install_source_auto">Automatic (default store: %1$s)</string>
+    <string name="install_source_none">This app (no spoofing)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, not installed)</string>
+    <string name="install_source_missing">%1$s (%2$s, not installed, falls back to the default store)</string>
+    <string name="install_source_custom">Custom package name…</string>
+    <string name="install_source_custom_title">Installer package name</string>
+    <string name="install_source_custom_hint">e.g. com.android.vending</string>
+    <string name="install_source_hint">Recording a store as the installer usually avoids OEM restrictions on apps from unknown sources.</string>
+    <string name="set_installer_named">Set installer to %1$s</string>
+
     <string name="package_name">"Package: "</string>
     <string name="size">"Size: "</string>
     <string name="split_name">"Split: "</string>

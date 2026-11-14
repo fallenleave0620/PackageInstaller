@@ -19,6 +19,18 @@
     <string name="set_installer">Définir l\'installateur</string>
     <string name="only_clear_data">Effacer uniquement les données</string>
     <string name="safe_mode">Mode sans échec</string>
+    <string name="install_source">Source d\'installation</string>
+    <string name="install_source_summary">Source d\'installation : %1$s</string>
+    <string name="install_source_auto">Automatique (magasin par défaut : %1$s)</string>
+    <string name="install_source_none">Cette appli (sans usurpation)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, non installé)</string>
+    <string name="install_source_missing">%1$s (%2$s, non installé, retour au magasin par défaut)</string>
+    <string name="install_source_custom">Nom de paquet personnalisé…</string>
+    <string name="install_source_custom_title">Nom du paquet installateur</string>
+    <string name="install_source_custom_hint">p. ex. com.android.vending</string>
+    <string name="install_source_hint">Enregistrer un magasin comme installateur évite généralement les restrictions du fabricant pour les applis de source inconnue.</string>
+    <string name="set_installer_named">Définir l\'installateur sur %1$s</string>
 
     <string name="package_name">"Package : "</string>
     <string name="size">"Taille : "</string>

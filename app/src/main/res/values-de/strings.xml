@@ -19,6 +19,18 @@
     <string name="set_installer">Installationsprogramm festlegen</string>
     <string name="only_clear_data">Nur Daten löschen</string>
     <string name="safe_mode">Abgesicherter Modus</string>
+    <string name="install_source">Installationsquelle</string>
+    <string name="install_source_summary">Installationsquelle: %1$s</string>
+    <string name="install_source_auto">Automatisch (Standardspeicher: %1$s)</string>
+    <string name="install_source_none">Diese App (keine Vortäuschung)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, nicht installiert)</string>
+    <string name="install_source_missing">%1$s (%2$s, nicht installiert, verwendet den Standardspeicher)</string>
+    <string name="install_source_custom">Benutzerdefinierter Paketname…</string>
+    <string name="install_source_custom_title">Paketname des Installers</string>
+    <string name="install_source_custom_hint">z. B. com.android.vending</string>
+    <string name="install_source_hint">Wird ein Store als Installer eingetragen, umgeht das meist OEM-Beschränkungen für Apps aus unbekannten Quellen.</string>
+    <string name="set_installer_named">Installer auf %1$s setzen</string>
 
     <string name="package_name">"Paket: "</string>
     <string name="size">"Größe: "</string>

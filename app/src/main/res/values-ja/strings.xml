@@ -19,6 +19,18 @@
     <string name="set_installer">インストーラーを設定</string>
     <string name="only_clear_data">データのみ消去</string>
     <string name="safe_mode">セーフモード</string>
+    <string name="install_source">インストール元</string>
+    <string name="install_source_summary">インストール元：%1$s</string>
+    <string name="install_source_auto">自動（既定のストア：%1$s）</string>
+    <string name="install_source_none">このアプリ（偽装なし）</string>
+    <string name="install_source_configured">%1$s（%2$s）</string>
+    <string name="install_source_unavailable">%1$s（%2$s、未インストール）</string>
+    <string name="install_source_missing">%1$s（%2$s、未インストール、既定のストアを使用）</string>
+    <string name="install_source_custom">カスタムパッケージ名…</string>
+    <string name="install_source_custom_title">インストーラのパッケージ名</string>
+    <string name="install_source_custom_hint">例: com.android.vending</string>
+    <string name="install_source_hint">インストーラをストアとして記録すると、不明なソースのアプリに対する OEM の制限を回避できることがあります。</string>
+    <string name="set_installer_named">インストーラを %1$s に設定</string>
 
     <string name="package_name">"パッケージ: "</string>
     <string name="size">"サイズ: "</string>

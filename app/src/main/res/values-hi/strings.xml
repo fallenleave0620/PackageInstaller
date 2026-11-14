@@ -19,6 +19,18 @@
     <string name="set_installer">इंस्टॉलर सेट करें</string>
     <string name="only_clear_data">केवल डेटा साफ़ करें</string>
     <string name="safe_mode">सुरक्षित मोड</string>
+    <string name="install_source">इंस्टॉल स्रोत</string>
+    <string name="install_source_summary">इंस्टॉल स्रोत: %1$s</string>
+    <string name="install_source_auto">स्वचालित (डिफ़ॉल्ट स्टोर: %1$s)</string>
+    <string name="install_source_none">यह ऐप (कोई नकल नहीं)</string>
+    <string name="install_source_configured">%1$s (%2$s)</string>
+    <string name="install_source_unavailable">%1$s (%2$s, इंस्टॉल नहीं है)</string>
+    <string name="install_source_missing">%1$s (%2$s, इंस्टॉल नहीं है, डिफ़ॉल्ट स्टोर पर लौटें)</string>
+    <string name="install_source_custom">कस्टम पैकेज नाम…</string>
+    <string name="install_source_custom_title">इंस्टॉलर पैकेज नाम</string>
+    <string name="install_source_custom_hint">जैसे com.android.vending</string>
+    <string name="install_source_hint">इंस्टॉलर के रूप में स्टोर दर्ज करने से अज्ञात स्रोत वाले ऐप्स पर OEM प्रतिबंध आमतौर पर टल जाते हैं।</string>
+    <string name="set_installer_named">इंस्टॉलर %1$s पर सेट करें</string>
 
     <string name="package_name">"पैकेज: "</string>
     <string name="size">"आकार: "</string>

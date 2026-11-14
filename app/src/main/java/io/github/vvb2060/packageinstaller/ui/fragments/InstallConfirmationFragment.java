@@ -30,6 +30,7 @@ import io.github.vvb2060.packageinstaller.R;
 import io.github.vvb2060.packageinstaller.apksig.Parser;
 import io.github.vvb2060.packageinstaller.apksig.Signer;
 import io.github.vvb2060.packageinstaller.apksig.Span;
+import io.github.vvb2060.packageinstaller.core.InstallSource;
 import io.github.vvb2060.packageinstaller.installmodel.InstallUserAction;
 
 public final class InstallConfirmationFragment extends BaseDialogFragment {
@@ -52,8 +53,18 @@ public final class InstallConfirmationFragment extends BaseDialogFragment {
         mTextView = dialogView.requireViewById(R.id.message);
         mCheckBox = dialogView.requireViewById(R.id.checkbox);
         if (mDialogData.setInstaller) {
-            mCheckBox.setText(R.string.set_installer);
             mCheckBox.setVisibility(View.VISIBLE);
+            // 默认勾选：安装来源默认取已安装的商店（Play 优先），
+            // 只有在设置里明确选了「不伪造」时才回到原来的未勾选行为。
+            var pm = InstallSource.packageManager(context);
+            var source = InstallSource.effectiveSource(context, pm);
+            if (!source.isEmpty()) {
+                mCheckBox.setText(getString(R.string.set_installer_named,
+                    InstallSource.label(pm, source)));
+                mCheckBox.setChecked(true);
+            } else {
+                mCheckBox.setText(R.string.set_installer);
+            }
         }
 
         var sb = new SpannableStringBuilder();
