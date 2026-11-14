@@ -12,7 +12,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -71,7 +70,7 @@ public class InstallViewModel extends AndroidViewModel {
             BinderWrapper.disableAdbVerify(context);
             PreferredActivity.set(pm);
 
-            var safeMode = sp.getBoolean("safe_mode", needSafeMode());
+            var safeMode = sp.getBoolean("safe_mode", false);
             repository = new InstallRepository(context, safeMode, installResult, stagingProgress);
             addCloseable(repository);
             repository.parseUri(intent);
@@ -95,23 +94,6 @@ public class InstallViewModel extends AndroidViewModel {
             return;
         }
         executor.execute(() -> repository.uninstall(entry));
-    }
-
-    private static boolean needSafeMode() {
-        var packageName = PreferredActivity.getSystemInstaller();
-        if (packageName == null) return false;
-        try {
-            var info = BinderWrapper.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
-            var perms = info.requestedPermissions;
-            if (perms == null) return false;
-            var list = List.of(perms);
-            if (list.contains(Manifest.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION)) {
-                return false;
-            }
-            return list.contains(Manifest.permission.INTERNET);
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
     }
 
     public void setSafeMode(boolean safeMode) {
