@@ -1,4 +1,0 @@
-<resources>
-    <string name="source_package_deleted">Source installation package deleted.</string>
-    <string name="source_package_retained">Installed successfully. The source package was retained because its provider did not allow or confirm deletion.</string>
-</resources>
