@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 public class LocalIntentReceiver {
     private final ResultObserver mResultObserver;
+    private final java.util.concurrent.Executor mExecutor;
 
     private final IIntentSender mLocalSender = new IIntentSender.Stub() {
         @Override
@@ -25,12 +26,18 @@ public class LocalIntentReceiver {
             int legacyStatus = intent.getIntExtra(PackageInstaller_rename.EXTRA_LEGACY_STATUS,
                 PackageManager_rename.INSTALL_FAILED_INTERNAL_ERROR);
             if (mResultObserver != null) {
-                mResultObserver.onResult(status, legacyStatus, statusMessage);
+                mExecutor.execute(() -> mResultObserver.onResult(status, legacyStatus, statusMessage));
             }
         }
     };
 
     public LocalIntentReceiver(@Nullable ResultObserver observer) {
+        this(Runnable::run, observer);
+    }
+
+    public LocalIntentReceiver(java.util.concurrent.Executor executor,
+                               @Nullable ResultObserver observer) {
+        mExecutor = executor;
         mResultObserver = observer;
     }
 

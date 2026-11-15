@@ -60,6 +60,12 @@ import rikka.shizuku.Shizuku;
 
 public class InstallRepository implements Closeable {
     private static final String TAG = InstallRepository.class.getSimpleName();
+    // Process-wide worker: callbacks may arrive after Activity teardown. Core threads time out
+    // when idle, so repositories neither leak their own executors nor reject late results.
+    private static final java.util.concurrent.Executor RESULT_EXECUTOR =
+        new java.util.concurrent.ThreadPoolExecutor(0, 1, 30, TimeUnit.SECONDS,
+            new java.util.concurrent.LinkedBlockingQueue<>(),
+            task -> new Thread(task, "installer-result"));
 
     private final MutableLiveData<InstallStage> installResult;
     private final MutableLiveData<Integer> stagingProgress;
@@ -214,7 +220,7 @@ public class InstallRepository implements Closeable {
 
     private void commit(PackageInstaller.Session session) {
         stagingProgress.postValue(101);
-        var receiver = new LocalIntentReceiver(this::setStageBasedOnResult);
+        var receiver = new LocalIntentReceiver(RESULT_EXECUTOR, this::setStageBasedOnResult);
         try {
             BinderWrapper.addDeveloperVerificationExperiment(apkLite.packageName);
             // noinspection RequestInstallPackagesPolicy
