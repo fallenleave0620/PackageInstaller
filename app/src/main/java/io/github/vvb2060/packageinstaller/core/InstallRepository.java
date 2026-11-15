@@ -28,6 +28,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -74,6 +75,10 @@ public class InstallRepository implements Closeable {
     private Closeable closeable;
     private Intent intent;
     private Uri sourcePackageUri;
+    /** file:// 来源时记录的真实文件，用于安装成功后删除。 */
+    private File sourcePackageFile;
+    /** 分区存储下读不到原文件时，shell 拷到 cache 的临时副本，装完要删。 */
+    private File cachedSourceCopy;
     private final java.util.concurrent.atomic.AtomicBoolean successDelivered =
         new java.util.concurrent.atomic.AtomicBoolean();
     /**
@@ -136,6 +141,11 @@ public class InstallRepository implements Closeable {
                 installResult.postValue(processContentUri(uri));
                 return;
             }
+            // 文件管理器 / 老式应用常见做法：直接给 file://，之前这里不认会落到设置页。
+            if (ContentResolver.SCHEME_FILE.equals(scheme) && uri.getPath() != null) {
+                installResult.postValue(processFile(new File(uri.getPath())));
+                return;
+            }
             if ("https".equals(scheme) || "http".equals(scheme)) {
                 installResult.postValue(processUrl(uri.toString()));
                 return;
@@ -156,7 +166,10 @@ public class InstallRepository implements Closeable {
 
     public void install(boolean setInstaller, boolean commit, boolean full, boolean removeSplit) {
         // Only a committed write of this source may delete it after success.
-        if (!commit || removeSplit) sourcePackageUri = null;
+        if (!commit || removeSplit) {
+            sourcePackageUri = null;
+            sourcePackageFile = null;
+        }
         installResult.postValue(new InstallInstalling(apkLite));
         if (zipParser == null) {
             installPackageUri();
@@ -271,6 +284,36 @@ public class InstallRepository implements Closeable {
             }
         }
         return stage;
+    }
+
+    private InstallStage processFile(File file) {
+        Log.v(TAG, "File: " + file);
+
+        ApkLite parsedApk;
+        try {
+            ParcelFileDescriptor pfd;
+            try {
+                pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            } catch (FileNotFoundException e) {
+                // 分区存储：本进程读不了 /sdcard，借 shell 拷到 cache 再读。
+                var copy = SourcePackageCleanup.copyToCache(context, file);
+                if (copy == null) throw e;
+                cachedSourceCopy = copy;
+                pfd = ParcelFileDescriptor.open(copy, ParcelFileDescriptor.MODE_READ_ONLY);
+            }
+            closeable = pfd;
+            var dataSource = FileDataSource.asDataSource(pfd);
+            zipParser = new ZipParser(dataSource);
+            parsedApk = zipParser.parse();
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to parse APK: " + file, e);
+            return new InstallAborted(InstallAborted.ABORT_PARSE, e.toString());
+        }
+        // 解析成功后才登记为可删除的源包；真正删不删看 install() 是否 commit。
+        sourcePackageFile = file;
+
+        if (parsedApk.label == null) parsedApk.label = file.getName();
+        return processApkLite(parsedApk);
     }
 
     private InstallStage processApkLite(ApkLite apk) {
@@ -665,7 +708,7 @@ public class InstallRepository implements Closeable {
                         ? PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE
                         : PackageInstaller.PACKAGE_SOURCE_LOCAL_FILE);
                 }
-                params.setOriginatingUid(callingUid);
+                if (callingUid != Process.INVALID_UID) params.setOriginatingUid(callingUid);
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 params.setPackageSource(PackageInstaller.PACKAGE_SOURCE_STORE);
             }
@@ -675,7 +718,7 @@ public class InstallRepository implements Closeable {
                     ? PackageInstaller.PACKAGE_SOURCE_DOWNLOADED_FILE
                     : PackageInstaller.PACKAGE_SOURCE_LOCAL_FILE);
             }
-            params.setOriginatingUid(callingUid);
+            if (callingUid != Process.INVALID_UID) params.setOriginatingUid(callingUid);
             installer = BuildConfig.APPLICATION_ID;
         }
         // noinspection NewApi
@@ -710,13 +753,21 @@ public class InstallRepository implements Closeable {
      */
     private int deleteSourcePackage() {
         var source = sourcePackageUri;
+        var file = sourcePackageFile;
+        var copy = cachedSourceCopy;
         sourcePackageUri = null;
-        if (source == null || uninstallIntent) return 0;
+        sourcePackageFile = null;
+        cachedSourceCopy = null;
+        if (copy != null) {
+            //noinspection ResultOfMethodCallIgnored
+            copy.delete();
+        }
+        if ((source == null && file == null) || uninstallIntent) return 0;
         if (!context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
             .getBoolean("delete_source_after_install", true)) {
             return 0;
         }
-        return SourcePackageCleanup.delete(context, source)
+        return SourcePackageCleanup.delete(context, source, file)
             ? R.string.source_package_deleted
             : R.string.source_package_retained;
     }
@@ -749,6 +800,13 @@ public class InstallRepository implements Closeable {
 
     @Override
     public void close() {
+        sourcePackageUri = null;
+        sourcePackageFile = null;
+        if (cachedSourceCopy != null) {
+            //noinspection ResultOfMethodCallIgnored
+            cachedSourceCopy.delete();
+            cachedSourceCopy = null;
+        }
         if (sessionId != SessionInfo.INVALID_ID) {
             try {
                 packageInstaller.abandonSession(sessionId);
