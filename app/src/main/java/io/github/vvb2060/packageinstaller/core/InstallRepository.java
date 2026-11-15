@@ -726,7 +726,10 @@ public class InstallRepository implements Closeable {
             // 成功回调可能重复到达（commit 与系统重投递），只消费一次源 URI。
             if (!successDelivered.compareAndSet(false, true)) return;
             var cleanupMessage = deleteSourcePackage();
-            var startIntent = BinderWrapper.pm.getLaunchIntentForPackage(apkLite.packageName);
+            // BinderWrapper.pm 在 safeMode 或 init 反射失败时为 null（init 只 Log.e），
+            // 这里和 createSessionParams 一样做兜底，否则安装成功那一刻直接 NPE 崩溃。
+            var launchPm = BinderWrapper.pm != null ? BinderWrapper.pm : packageManager;
+            var startIntent = launchPm.getLaunchIntentForPackage(apkLite.packageName);
             try {
                 var info = BinderWrapper.getPackageInfo(apkLite.packageName, 0);
                 apkLite.icon = info.applicationInfo.loadIcon(packageManager);
