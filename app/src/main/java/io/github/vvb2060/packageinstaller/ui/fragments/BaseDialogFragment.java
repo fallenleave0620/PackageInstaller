@@ -50,11 +50,19 @@ public abstract sealed class BaseDialogFragment extends DialogFragment permits
     }
 
     protected void startActivitySafe(Intent intent, boolean safeMode) {
-        if (safeMode) {
+        if (intent == null) return;
+        // Prefer the Sui/Shizuku-wrapped ActivityManager. The shell identity avoids
+        // ColorOS/OEM "open other apps" restrictions applied to this installer UID.
+        try {
             BinderWrapper.startActivity(intent);
-        } else try {
+            return;
+        } catch (RuntimeException suiFailure) {
+            if (safeMode) return;
+        }
+        try {
             requireActivity().startActivity(intent);
-        } catch (ActivityNotFoundException | SecurityException _) {
+        } catch (ActivityNotFoundException | SecurityException ignored) {
+            // Both launch paths can be unavailable during package-manager restart.
         }
     }
 }

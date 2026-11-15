@@ -28,6 +28,11 @@
         <package android:name="com.hihonor.appmarket" />
         <package android:name="com.bbk.appstore" />
         <package android:name="com.sec.android.app.samsungapps" />
+        <!-- Allow getLaunchIntentForPackage() to see the installed app after a commit. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 
     <application

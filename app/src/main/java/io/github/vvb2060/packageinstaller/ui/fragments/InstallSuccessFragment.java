@@ -3,6 +3,7 @@ package io.github.vvb2060.packageinstaller.ui.fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -37,18 +38,28 @@ public final class InstallSuccessFragment extends BaseDialogFragment {
             .setMessage(message)
             .setNegativeButton(R.string.done, (_, _) -> finish())
             .setPositiveButton(R.string.launch, (_, _) -> {
-                startActivitySafe(mDialogData.startIntent, mDialogData.safeMode);
+                startActivitySafe(resolveLaunchIntent(), mDialogData.safeMode);
                 finish();
             })
             .create();
         return mDialog;
     }
 
+    @Nullable
+    private Intent resolveLaunchIntent() {
+        var packageName = mDialogData.apkLite.packageName;
+        var intent = requireContext().getPackageManager().getLaunchIntentForPackage(packageName);
+        if (intent == null) intent = mDialogData.startIntent;
+        if (intent == null) return null;
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         Button launchButton = mDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (mDialogData.startIntent == null) {
+        if (resolveLaunchIntent() == null) {
             launchButton.setVisibility(View.GONE);
         }
     }
